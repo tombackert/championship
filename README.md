@@ -5,7 +5,7 @@
 
 
 ### Idea
-- I'm no data scientist, neither a football analyst (eventhough I know a fair amount). So why not let a neural network figure out the correlations in the data that lead a team to the championship? I was good at building predicter systems in the past, so let's build a predicter to predict the upcoming champion
+- I'm no data scientist, neither a football analyst (eventhough I know a fair amount). So why not let a neural network figure out the correlations in the data that lead a team to the championship? I was good at building predictor systems in the past, so let's build a predictor to predict the upcoming champion
 
 ### Milestones
 - Market analysis
