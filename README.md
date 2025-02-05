@@ -11,6 +11,9 @@
 - Team dynamics (home vs away performance)
 - Weather data on game day
 
+### Idea
+I'm no data scientist, neither a football analyst (eventhough I know a fair amount). So why not let a neural network figure out the correlations in the data that lead a team to the championship?
+
 ### Data challenges
 - API integration (football-data.org)
 - Web scraping (transfermarkt)
