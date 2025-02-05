@@ -22,6 +22,7 @@
 - Time-series models (LSTM)
 - Bayesian networks (probabilistic outcomes)
 - Deep Learning (enough data?)
+- Monte Carlo methodes
 
 ### Deployment
 - Simple dashboard
@@ -38,7 +39,8 @@
 ### Milestones
 - Market analysis
   - How was this done before?
-  - What can it be made better?
+  - How can it be made better?
+- Decision on model type
 - MPV Development
   - Full ml pipeline
     - Data collection
@@ -56,4 +58,4 @@
 - Scale it!
 
 
-Resources:
+### Resources
