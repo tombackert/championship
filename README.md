@@ -43,7 +43,9 @@ I'm no data scientist, neither a football analyst (eventhough I know a fair amou
 - Market analysis
   - How was this done before?
   - How can it be made better?
+- Decision on data
 - Decision on model type
+- Decision on mpv strat
 - MPV Development
   - Full ml pipeline
     - Data collection
