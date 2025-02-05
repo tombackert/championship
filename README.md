@@ -1,66 +1,22 @@
-# Championship
-
-## Init Brainstorm
+# Project Championship
 
 ### Goal
 - Predict the upcoming Premier League champion
 
-### Data
-- Match outcomes (wins, losses, goals)
-- Player related (injuries, transfers)
-- Team dynamics (home vs away performance)
-- Weather data on game day
 
 ### Idea
-I'm no data scientist, neither a football analyst (eventhough I know a fair amount). So why not let a neural network figure out the correlations in the data that lead a team to the championship?
-
-### Data challenges
-- API integration (football-data.org)
-- Web scraping (transfermarkt)
-- Handling inconsistencies 
-
-### Approaches (models)
-- Regression models (poisson regression)
-- Ensemble methodes (Random Forest, XGBoost)
-- Time-series models (LSTM)
-- Bayesian networks (probabilistic outcomes)
-- Deep Learning (enough data?)
-- Monte Carlo methodes
-
-### Deployment
-- Simple dashboard
-- Integration of live data (API setup)
-
-### Psychology of football
-- Problem: Games can be decided by a teams state of mind 
-- Football outcomes are highly linked to emotional aspects
-- How can this be linked to external statistics?
-- Where are the corelations between game outcomes and a teams state of mind?
-
-## Project planing
+- I'm no data scientist, neither a football analyst (eventhough I know a fair amount). So why not let a neural network figure out the correlations in the data that lead a team to the championship? I was good at building predicter systems in the past, so let's build a predicter to predict the upcoming champion
 
 ### Milestones
 - Market analysis
-  - How was this done before?
-  - How can it be made better?
 - Decision on data
 - Decision on model type
 - Decision on mpv strat
-- MPV Development
-  - Full ml pipeline
-    - Data collection
-    - EDA
-    - Feature Engineering
-    - Model selection/building/training
-    - Evaluation (Metrics: Accuracy, Log loss, Brier score, comparision vs bookmaker models)
-    - Deployment
-  - Explaining model decision (XAI: SHAP, LIME)
-- Reiteration
-- Make it better
-  - Updating model as new data comes in
-  - Retraining pipeline
+- MPV development
 - Make it a product!
+- Make it better! (Delete, optimize, accelerate, automate)
 - Scale it!
 
-
-### Resources
+### Let's build!
+- Project management: https://github.com/tombackert/championship/issues/2#issue-2832842408
+- Project suggestions: https://github.com/tombackert/championship/discussions/5#discussion-7919668
