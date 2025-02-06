@@ -22,7 +22,6 @@ def clean_filename(name):
 
 def parse_table(table):
     """Parses a single table with complex structure."""
-    # Extract headers using data-stat attributes
     headers = []
     for th in table.select('thead tr:not(.over_header) th'):
         if th.get('data-stat'):
@@ -33,7 +32,6 @@ def parse_table(table):
             }
             headers.append(header_info)
 
-    # Extract row data
     rows = []
     for row in table.select('tbody tr'):
         row_data = {}
@@ -41,11 +39,8 @@ def parse_table(table):
             if cell.get('data-stat'):
                 key = cell['data-stat']
                 value = cell.get_text(strip=True)
-                
-                # Data cleaning
                 if key != 'team':
                     value = value.replace(',', '.').replace('−', '-')
-                
                 row_data[key] = value
         if row_data:
             rows.append(row_data)
@@ -53,18 +48,26 @@ def parse_table(table):
     return headers, rows
 
 def save_table(headers, rows, table_name, season):
-    """Saves the table data as a CSV file."""
+    """Saves the table data as a CSV file.
+    If a file with the same name already exists, appends '_opponent-stats' to the filename.
+    """
     save_path = f'{OUTPUT_DIR}/{season}'
     os.makedirs(save_path, exist_ok=True)
     
     safe_name = clean_filename(table_name)
     filename = f'{safe_name}.csv'
+    file_path = os.path.join(save_path, filename)
     
-    with open(f'{save_path}/{filename}', 'w', newline='', encoding='utf-8') as f:
+    # If file already exists, overwrite
+    if os.path.exists(file_path):
+        filename = safe_name
+        file_path = os.path.join(save_path, filename)
+    
+    with open(file_path, 'w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=[h['key'] for h in headers])
         writer.writerow({h['key']: h['name'] for h in headers})
         writer.writerows(rows)
-
+    
 def save_metadata(season, num_tables):
     """Saves metadata about the scraping process."""
     metadata = {
@@ -87,18 +90,17 @@ def process_all_tables(soup, season):
     
     for i, table in enumerate(tables):
         try:
-            # Use table ID or generate a name
             table_id = table.get('id') or f'table_{i+1}'
-            caption = table.find('caption').get_text(strip=True) if table.find('caption') else table_id
-            
-            headers, rows = parse_table(table)
+            table_name = table_id
+        
+            headers, rows = parse_table(table) # Extract table data
             
             if headers and rows:
-                save_table(headers, rows, caption, season)
-                print(f'Saved: {caption} ({len(rows)} rows)')
+                save_table(headers, rows, table_name, season)
+                print(f'Saved: {table_name:<40} ({len(headers):<2} cols)({len(rows):<2} rows)')
                 num_tables += 1
             else:
-                print(f'Skipped: {caption} (no data)')
+                print(f'Skipped: {table_name:<40} (no data)')
                 
         except Exception as e:
             print(f'Error processing table {table_id}: {str(e)}')
@@ -107,20 +109,16 @@ def process_all_tables(soup, season):
 
 def main():
     """Main function to scrape and save all tables."""
-    print('Starting scraping process...')
+    print(f'Starting scraping process...\n')
     
-    # Fetch and parse the page
     html = fetch_page(BASE_URL)
     soup = BeautifulSoup(html, 'html.parser')
     
-    # Extract season from the title
     title = soup.find('h1').get_text(strip=True)
     season = ''.join(c for c in title if c.isdigit() or c == '-')
     
-    # Process all tables
     num_tables = process_all_tables(soup, season)
     
-    # Save metadata
     save_metadata(season, num_tables)
     
     print(f'\nScraping completed for season {season}')
