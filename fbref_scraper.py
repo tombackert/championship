@@ -48,9 +48,7 @@ def parse_table(table):
     return headers, rows
 
 def save_table(headers, rows, table_name, season):
-    """Saves the table data as a CSV file.
-    If a file with the same name already exists, appends '_opponent-stats' to the filename.
-    """
+    """Saves the table data as a CSV file."""
     save_path = f'{OUTPUT_DIR}/{season}'
     os.makedirs(save_path, exist_ok=True)
     
@@ -60,6 +58,8 @@ def save_table(headers, rows, table_name, season):
     
     # If file already exists, overwrite
     if os.path.exists(file_path):
+        fn = filename.replace('.csv', '')
+        print(f'File with name {fn} already exists. Overwriting...')
         filename = safe_name
         file_path = os.path.join(save_path, filename)
     
@@ -121,8 +121,8 @@ def main():
     
     save_metadata(season, num_tables)
     
-    print(f'\nScraping completed for season {season}')
-    print(f'Total tables processed: {num_tables}')
+    print(f'\nScraping completed for season: {season:>27}')
+    print(f'Total tables processed: {num_tables:>27}')
 
 if __name__ == "__main__":
     main()
