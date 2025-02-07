@@ -1,3 +1,4 @@
+# scraper.py
 import os
 import csv
 import json
@@ -6,8 +7,7 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from user_agent import generate_user_agent
 
-BASE_URL = 'https://fbref.com/en/comps/9/Premier-League-Stats'
-OUTPUT_DIR = 'datasets/fbref'
+from config import OUTPUT_BASE_DIR, RESOURCES
 
 def fetch_page(url):
     """Fetches the HTML content of the page."""
@@ -47,43 +47,39 @@ def parse_table(table):
     
     return headers, rows
 
-def save_table(headers, rows, table_name, season):
+def save_table(headers, rows, table_name, season, output_base_dir):
     """Saves the table data as a CSV file."""
-    save_path = f'{OUTPUT_DIR}/{season}'
+    save_path = os.path.join(output_base_dir, season)
     os.makedirs(save_path, exist_ok=True)
     
     safe_name = clean_filename(table_name)
     filename = f'{safe_name}.csv'
     file_path = os.path.join(save_path, filename)
     
-    # If file already exists, overwrite
     if os.path.exists(file_path):
-        fn = filename.replace('.csv', '')
-        print(f'File with name {fn} already exists. Overwriting...')
-        filename = safe_name
-        file_path = os.path.join(save_path, filename)
+        print(f'File {filename} already exists. Overwriting...')
     
     with open(file_path, 'w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=[h['key'] for h in headers])
         writer.writerow({h['key']: h['name'] for h in headers})
         writer.writerows(rows)
-    
-def save_metadata(season, num_tables):
+
+def save_metadata(season, num_tables, output_base_dir, source_url):
     """Saves metadata about the scraping process."""
     metadata = {
         'scrape_date': datetime.now().isoformat(),
-        'source_url': BASE_URL,
+        'source_url': source_url,
         'tables_scraped': num_tables,
         'season': season
     }
     
-    save_path = f'{OUTPUT_DIR}/{season}'
+    save_path = os.path.join(output_base_dir, season)
     os.makedirs(save_path, exist_ok=True)
     
-    with open(f'{save_path}/_metadata.json', 'w', encoding='utf-8') as f:
+    with open(os.path.join(save_path, '_metadata.json'), 'w', encoding='utf-8') as f:
         json.dump(metadata, f, indent=2)
 
-def process_all_tables(soup, season):
+def process_all_tables(soup, season, output_base_dir):
     """Processes all tables on the page."""
     tables = soup.find_all('table', class_='stats_table')
     num_tables = 0
@@ -93,10 +89,10 @@ def process_all_tables(soup, season):
             table_id = table.get('id') or f'table_{i+1}'
             table_name = table_id
         
-            headers, rows = parse_table(table) # Extract table data
+            headers, rows = parse_table(table)
             
             if headers and rows:
-                save_table(headers, rows, table_name, season)
+                save_table(headers, rows, table_name, season, output_base_dir)
                 print(f'Saved: {table_name:<40} ({len(headers):<2} cols)({len(rows):<2} rows)')
                 num_tables += 1
             else:
@@ -108,21 +104,28 @@ def process_all_tables(soup, season):
     return num_tables
 
 def main():
-    """Main function to scrape and save all tables."""
+    """Main function to scrape and save all tables for each resource."""
     print(f'Starting scraping process...\n')
     
-    html = fetch_page(BASE_URL)
-    soup = BeautifulSoup(html, 'html.parser')
-    
-    title = soup.find('h1').get_text(strip=True)
-    season = ''.join(c for c in title if c.isdigit() or c == '-')
-    
-    num_tables = process_all_tables(soup, season)
-    
-    save_metadata(season, num_tables)
-    
-    print(f'\nScraping completed for season: {season:>27}')
-    print(f'Total tables processed: {num_tables:>27}')
+    for resource in RESOURCES:
+        season = resource['season']
+        url = resource['url']
+        
+        print(f'Processing season: {season}')
+        
+        try:
+            html = fetch_page(url)
+            soup = BeautifulSoup(html, 'html.parser')
+            
+            num_tables = process_all_tables(soup, season, OUTPUT_BASE_DIR)
+            save_metadata(season, num_tables, OUTPUT_BASE_DIR, url)
+            
+            print(f'\nScraping completed for season: {season}')
+            print(f'Total tables processed: {num_tables}\n')
+            
+        except Exception as e:
+            print(f'Error processing season {season}: {str(e)}')
+            continue
 
 if __name__ == "__main__":
     main()
