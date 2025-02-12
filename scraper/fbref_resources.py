@@ -15,7 +15,8 @@ def generate_season_resources(start_year=1990, end_year=2024):
         })
     return resources
 
-### Set the resources to scrape 
 
-# RESOURCES = generate_season_resources()
-# RESOURCES = [{'season': '2024-2025', 'url': 'https://fbref.com/en/comps/9/Premier-League-Stats'}]
+RESOURCES = generate_season_resources()
+
+### Add current season to resources
+#RESOURCES = [{'season': '2024-2025', 'url': 'https://fbref.com/en/comps/9/Premier-League-Stats'}]

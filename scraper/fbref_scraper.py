@@ -7,7 +7,7 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from user_agent import generate_user_agent
 
-from config import OUTPUT_BASE_DIR, RESOURCES
+from scraper.fbref_resources import OUTPUT_BASE_DIR, RESOURCES
 
 def fetch_page(url):
     """Fetches the HTML content of the page."""
